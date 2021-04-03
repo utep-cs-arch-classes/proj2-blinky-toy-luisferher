@@ -43,6 +43,23 @@ void state_advance()		/* alternate between toggling red & green */
   led_changed = changed;
   led_update();
 }
-
+void simple_state(){ /* alternate between red & green on at the same time and off*/
+  static char state = 0;
+  char changed = 1; 
+  switch(state) {
+  case 0:
+    red_on = 1;
+    green_on = 1;
+    state = 1;
+    break;
+  case 1:
+    red_on = 0;
+    green_on = 0;
+    state = 0;
+    break;
+}
+  led_changed = changed;
+  led_update();
+}
 
 
