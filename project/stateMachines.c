@@ -2,7 +2,8 @@
 #include "stateMachines.h"
 #include "led.h"
 
-char toggle_red()		/* always toggle! */
+static char state_dim = 0;
+void toggle_red()		/*Turn red on and off */
 {
   static char state = 0;
 
@@ -16,31 +17,66 @@ char toggle_red()		/* always toggle! */
     state = 0;
     break;
   }
-  return 1;			/* always changes an led */
+  led_changed = 1;
+  led_update();
 }
 
-char toggle_green()	/* only toggle green if red is on!  */
+void toggle_green()	/* turn green on and off */
 {
-  char changed = 0;
-  if (red_on) {
-    green_on ^= 1;
-    changed = 1;
+  static char state = 0;
+  switch(state){
+  case 0:
+    green_on = 1;
+    state = 1;
+    break;
+  case 1:
+    green_on = 0;
+    state = 0;
+    break;
   }
-  return changed;
+  led_changed = 1;
+  led_update();
 }
-
-
-void state_advance()		/* alternate between toggling red & green */
-{
-  char changed = 0;  
-
-  static enum {R=0, G=1} color = G;
-  switch (color) {
-  case R: changed = toggle_red(); color = G; break;
-  case G: changed = toggle_green(); color = R; break;
+void red_always_on(){
+    red_on = 1;
+    led_changed = 1;
+    led_update();
+}
+void toggle_red25(){
+  static char state = 0;
+  switch(state){
+  case 0:
+    red_on = 0;
+    state = 1;
+    break;
+  case 1:
+    red_on = 0;
+    state = 2;
+    break;
+  case 2:
+    red_on = 1;
+    state = 0;
   }
-
-  led_changed = changed;
+  led_changed = 1;
+  led_update();
+}
+void toggle_red75(){
+  static char state = 0;
+  switch(state){
+  case 0:
+    red_on = 1;
+    state = 1;
+    break;
+  case 1:
+    red_on = 1;
+    state = 2;
+    break;
+  case 2:
+    red_on = 0;
+    state = 0;
+    break;
+  }
+  led_changed = 1;
   led_update();
 }
 void simple_state(){ /* alternate between red & green on at the same time and off*/
@@ -62,4 +98,27 @@ void simple_state(){ /* alternate between red & green on at the same time and of
   led_update();
 }
 
-
+void dimming(){
+  switch(state_dim){
+  case 0:
+    toggle_red25();
+    break;
+  case 1:
+    toggle_red();
+    break;
+  case 2:
+    toggle_red75();
+    break;
+  }
+}
+void change_dimming(){
+  if(state_dim == 0){
+    state_dim = 1;
+  }
+  else if(state_dim == 1){
+    state_dim = 2;
+  }
+  else{
+    state_dim = 0;
+  }
+}
