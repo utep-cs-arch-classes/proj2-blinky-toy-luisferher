@@ -3,7 +3,8 @@
 
 void state_advance();
 void simple_state();
-void dimming();
+void dimmingRed();
+void dimmingGreen();
 void change_dimming();
 void song();
 

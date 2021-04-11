@@ -38,8 +38,8 @@ void toggle_green()	/* turn green on and off */
   led_changed = 1;
   led_update();
 }
-void red_always_on(){
-    red_on = 1;
+void green_always_on(){
+    green_on = 1;
     led_changed = 1;
     led_update();
 }
@@ -110,14 +110,23 @@ void simple_state(){ /* alternate between red & green on at the same time and of
   led_update();
 }
 
-void dimming(){
+void dimmingRed(){
   switch(state_dim){
   case 0:
     toggle_red25();
-    toggle_green();
     break;
   case 1:
     toggle_red75();
+    break;
+  }
+}
+void dimmingGreen(){
+  switch(state_dim){
+  case 0:
+    toggle_green();
+    break;
+  case 1:
+    green_always_on();
     break;
   }
 }
